@@ -63,46 +63,61 @@ function load_mailbox(mailbox) {
 
   const container = document.createElement('div');
   container.classList = 'container';
+  container.id = 'email-list';
+  document.querySelector('#emails-view').appendChild(container);
 
-  fetch('/emails/inbox')
+  fetch(`/emails/${mailbox}`)
   .then(response => response.json())
   .then(emails => {
-    // Print emails
-    console.log(emails);
-
-    // ... do something else with emails ...
-
     emails.forEach(email => {
+      const divRow = showEmail(email);
 
-      const sender = email.sender;
-      const subject = email.subject;
-      const timestamp = email.timestamp;
-
-      const divRow = document.createElement('div');
-      divRow.classList.add('row', 'pb-2');
-      divRow.style.borderBottom = '2px solid';
-
-      const divSender = document.createElement('div');
-      divSender.classList = 'col-sm';
-      divSender.innerHTML = sender;
-
-      const divSubject = document.createElement('div');
-      divSubject.classList = 'col-sm';
-      divSubject.innerHTML = subject;
-
-      const divTimestamp = document.createElement('div');
-      divTimestamp.classList = 'col-sm';
-      divTimestamp.innerHTML = timestamp;
-
-      document.querySelector('#emails-view').append(container);
-      container.append(divRow);
-      divRow.append(divSender);
-      divRow.append(divSubject);
-      divRow.append(divTimestamp);
-
-      if (email.read == false) {
-      divRow.style.backgroundColor = '#D3D3D3';
-      }
+      // Load individual emails on click
+      divRow.addEventListener('click', function loadEmail(event) {
+        container.innerHTML = "";
+        showEmail(email, true);
+      });
     });
-  })
+  });
+}
+
+function showEmail(email, showBody = false) {
+  const sender = email.sender;
+  const subject = email.subject;
+  const body = email.body;
+  const timestamp = email.timestamp;
+  const container = document.getElementById('email-list');
+
+  const divRow = document.createElement('div');
+  divRow.classList.add('row', 'pb-2');
+  divRow.style.borderBottom = '2px solid';
+
+  const divSender = document.createElement('div');
+  divSender.classList = 'col-sm';
+  divSender.innerHTML = sender;
+
+  const divSubject = document.createElement('div');
+  divSubject.classList = 'col-sm';
+  divSubject.innerHTML = subject;
+
+  const divTimestamp = document.createElement('div');
+  divTimestamp.classList = 'col-sm';
+  divTimestamp.innerHTML = timestamp;
+
+  document.querySelector('#emails-view').append(container);
+  container.append(divRow);
+  divRow.append(divSender);
+  divRow.append(divSubject);
+  if (showBody) {
+    const divBody = document.createElement('div');
+    divBody.classList = 'col-sm';
+    divBody.innerHTML = body;
+    divRow.append(divBody);
+  }
+  divRow.append(divTimestamp);
+
+  if (!email.read) {
+    divRow.style.backgroundColor = '#D3D3D3';
+  }
+  return divRow;
 }

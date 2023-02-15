@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
 
   // Use buttons to toggle between views
-  document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
-  document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
-  document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#inbox').addEventListener('click', () => loadMailbox('inbox'));
+  document.querySelector('#sent').addEventListener('click', () => loadMailbox('sent'));
+  document.querySelector('#archived').addEventListener('click', () => loadMailbox('archive'));
+  document.querySelector('#compose').addEventListener('click', composeEmail);
 
   // By default, load the inbox
-  load_mailbox('inbox');
+  loadMailbox('inbox');
 });
 
-function compose_email() {
+function composeEmail() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -39,24 +39,9 @@ function compose_email() {
     .then(result => {
       if (result.error) {
         // Add error message with dismissal to view
-        const divError = document.createElement('div');
-        divError.classList.add('error-btn', 'alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
-        divError.innerHTML = result.error;
-        document.querySelector('#compose-view').prepend(divError);
-
-        const btnError = document.createElement('button');
-        btnError.classList.add('close');
-        btnError.setAttribute('data-bs-dismiss', 'alert');
-        btnError.setAttribute('aria-label', 'Close');
-
-        const span = document.createElement('span');
-        span.setAttribute('aria-hidden', 'true');
-        span.innerHTML = '&times;';
-        
-        document.querySelector('.error-btn').append(btnError);
-        document.querySelector('.close').append(span);
+        showError(result.error);
       } else {
-        load_mailbox('sent');
+        loadMailbox('sent');
       }
     })
     .catch(error => {
@@ -67,7 +52,7 @@ function compose_email() {
   }
 }
 
-function load_mailbox(mailbox) {
+function loadMailbox(mailbox) {
   
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
@@ -88,7 +73,7 @@ function load_mailbox(mailbox) {
       const divRow = showEmail(email);
 
       // Load individual emails on click
-      divRow.addEventListener('click', function loadEmail(event) {
+      divRow.addEventListener('click', function loadEmail() {
         container.innerHTML = "";
         showEmail(email, true);
       });
@@ -128,11 +113,41 @@ function showEmail(email, showBody = false) {
     divBody.classList = 'col-sm';
     divBody.innerHTML = body;
     divRow.append(divBody);
+
+    // Mark email as read
+    fetch(`/emails/${email.id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        read: true
+      })
+    });
   }
   divRow.append(divTimestamp);
 
-  if (!email.read) {
+  if (email.read === false) {
     divRow.style.backgroundColor = '#D3D3D3';
   }
+
   return divRow;
+}
+
+function showError(error) {
+  const divError = document.createElement('div');
+  divError.classList.add('error-btn', 'alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
+  divError.innerHTML = error;
+  document.querySelector('#compose-view').prepend(divError);
+
+  const btnError = document.createElement('button');
+  btnError.classList.add('close');
+  btnError.setAttribute('data-bs-dismiss', 'alert');
+  btnError.setAttribute('aria-label', 'Close');
+
+  const span = document.createElement('span');
+  span.setAttribute('aria-hidden', 'true');
+  span.innerHTML = '&times;';
+  
+  document.querySelector('.error-btn').append(btnError);
+  document.querySelector('.close').append(span);
+
+  return divError;
 }

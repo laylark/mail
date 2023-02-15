@@ -38,8 +38,23 @@ function compose_email() {
     .then(response => response.json())
     .then(result => {
       if (result.error) {
-        // Add error message to view
-        console.log(result.error);
+        // Add error message with dismissal to view
+        const divError = document.createElement('div');
+        divError.classList.add('error-btn', 'alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
+        divError.innerHTML = result.error;
+        document.querySelector('#compose-view').prepend(divError);
+
+        const btnError = document.createElement('button');
+        btnError.classList.add('close');
+        btnError.setAttribute('data-bs-dismiss', 'alert');
+        btnError.setAttribute('aria-label', 'Close');
+
+        const span = document.createElement('span');
+        span.setAttribute('aria-hidden', 'true');
+        span.innerHTML = '&times;';
+        
+        document.querySelector('.error-btn').append(btnError);
+        document.querySelector('.close').append(span);
       } else {
         load_mailbox('sent');
       }

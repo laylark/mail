@@ -133,7 +133,7 @@ function showEmail(email, showBody = false) {
 
   // Create reply button
   let replyButton = document.createElement('button');
-  replyButton.classList = 'btn btn-sm btn-outline-success flex my-1';
+  replyButton.classList = 'btn btn-sm btn-outline-success flex m-1';
   replyButton.id = 'reply';
   replyButton.innerHTML = 'Reply';
   divRow.append(replyButton);
@@ -149,6 +149,13 @@ function showEmail(email, showBody = false) {
     replyRecipients.value = sender;
   });
 
+  // Create archive button
+  let archiveButton = document.createElement('button');
+  archiveButton.classList = 'btn btn-sm btn-outline-danger flex m-1';
+  archiveButton.id = 'archive';
+  archiveButton.innerHTML = 'Archive';
+  divRow.append(archiveButton);
+
   return divRow;
 }
 
@@ -158,16 +165,16 @@ function showError(error) {
   divError.innerHTML = error;
   document.querySelector('#compose-view').prepend(divError);
 
-  const btnError = document.createElement('button');
-  btnError.classList.add('close');
-  btnError.setAttribute('data-bs-dismiss', 'alert');
-  btnError.setAttribute('aria-label', 'Close');
+  const errorButton = document.createElement('button');
+  errorButton.classList.add('close');
+  errorButton.setAttribute('data-bs-dismiss', 'alert');
+  errorButton.setAttribute('aria-label', 'Close');
 
   const span = document.createElement('span');
   span.setAttribute('aria-hidden', 'true');
   span.innerHTML = '&times;';
   
-  document.querySelector('.error-btn').append(btnError);
+  document.querySelector('.error-btn').append(errorButton);
   document.querySelector('.close').append(span);
 
   return divError;

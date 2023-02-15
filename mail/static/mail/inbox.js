@@ -88,6 +88,7 @@ function showEmail(email, showBody = false) {
   const timestamp = email.timestamp;
   const container = document.getElementById('email-list');
 
+  // Create email element
   const divRow = document.createElement('div');
   divRow.classList.add('row', 'pb-2');
   divRow.style.borderBottom = '2px solid';
@@ -108,6 +109,8 @@ function showEmail(email, showBody = false) {
   container.append(divRow);
   divRow.append(divSender);
   divRow.append(divSubject);
+
+  // Show full email if clicked
   if (showBody) {
     const divBody = document.createElement('div');
     divBody.classList = 'col-sm';
@@ -127,6 +130,24 @@ function showEmail(email, showBody = false) {
   if (email.read === false) {
     divRow.style.backgroundColor = '#D3D3D3';
   }
+
+  // Create reply button
+  let replyButton = document.createElement('button');
+  replyButton.classList = 'btn btn-sm btn-outline-success flex my-1';
+  replyButton.id = 'reply';
+  replyButton.innerHTML = 'Reply';
+  divRow.append(replyButton);
+
+  // Compose new email if reply clicked
+  document.querySelector('#reply').addEventListener('click', () => {
+    composeEmail();
+    const replySubject = document.querySelector('#compose-subject');
+    if (subject.slice(0, 4) != 'RE: ' ) {
+      replySubject.value = `RE: ${subject}`;
+    }
+    const replyRecipients = document.querySelector('#compose-recipients');
+    replyRecipients.value = sender;
+  });
 
   return divRow;
 }

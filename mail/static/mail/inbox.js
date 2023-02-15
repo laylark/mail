@@ -134,16 +134,17 @@ function showEmail(email, showBody = false) {
   // Create reply button
   let replyButton = document.createElement('button');
   replyButton.classList = 'btn btn-sm btn-outline-success flex m-1';
-  replyButton.id = 'reply';
   replyButton.innerHTML = 'Reply';
   divRow.append(replyButton);
 
   // Compose new email if reply clicked
-  document.querySelector('#reply').addEventListener('click', () => {
+  replyButton.addEventListener('click', () => {
     composeEmail();
     const replySubject = document.querySelector('#compose-subject');
     if (subject.slice(0, 4) != 'RE: ' ) {
       replySubject.value = `RE: ${subject}`;
+    } else {
+      replySubject.value = subject;
     }
     const replyRecipients = document.querySelector('#compose-recipients');
     replyRecipients.value = sender;
@@ -152,9 +153,40 @@ function showEmail(email, showBody = false) {
   // Create archive button
   let archiveButton = document.createElement('button');
   archiveButton.classList = 'btn btn-sm btn-outline-danger flex m-1';
-  archiveButton.id = 'archive';
   archiveButton.innerHTML = 'Archive';
-  divRow.append(archiveButton);
+  // divRow.append(archiveButton);
+
+  // Determine the archive button text
+  let archiveStatus = email.archived;
+
+  if (archiveStatus == true) {
+    archiveButton.innerHTML = 'Unarchive'
+
+    archiveButton.addEventListener('click', async () => {
+      await fetch(`/emails/${email.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            archived: false
+        })
+      });
+
+      loadMailbox('inbox');
+    });
+  } else {
+    archiveButton.innerHTML = 'Archive'
+
+    archiveButton.addEventListener('click', async () => {
+      await fetch(`/emails/${email.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            archived: true
+        })
+      });
+
+      loadMailbox('inbox');
+    });
+  }
+  divRow.append(archiveButton)
 
   return divRow;
 }

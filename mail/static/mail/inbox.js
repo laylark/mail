@@ -82,14 +82,15 @@ function loadMailbox(mailbox) {
 }
 
 function showEmail(email, mailbox, showBody = false) {
-  const sender = email.sender;
-  const subject = email.subject;
-  const body = email.body;
-  const timestamp = email.timestamp;
-  const recipients = email.recipients;
-  const container = document.getElementById('email-list');
+  const {
+    sender,
+    subject,
+    body,
+    timestamp,
+    recipients,
+  } = email;
 
-  console.log(email);
+  const container = document.getElementById('email-list');
 
   // Create email element
   const divRow = document.createElement('div');
@@ -120,12 +121,13 @@ function showEmail(email, mailbox, showBody = false) {
 
   document.querySelector('#emails-view').append(container);
 
+  container.append(divRow);
+
   // Show full email if clicked
   if (showBody) {
     const divBody = document.createElement('div');
-    divBody.classList = 'col-sm';
     divBody.innerHTML = body;
-    divRow.append(divBody);
+    container.append(divBody);
 
     divSender.innerHTML = `<strong>From: ${sender}</strong>`;
     divRecipients.innerHTML = `To: ${recipients}`;
@@ -139,6 +141,7 @@ function showEmail(email, mailbox, showBody = false) {
       })
     });
   }
+  
   divRow.append(divTimestamp);
 
   if (email.read === true) {
@@ -209,10 +212,9 @@ function showEmail(email, mailbox, showBody = false) {
         loadMailbox('inbox');
       });
     }
-  divRow.append(archiveButton)
+    
+    divRow.append(archiveButton)
   }
-
-  container.append(divRow);
 
   return divRow;
 }

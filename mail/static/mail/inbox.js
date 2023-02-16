@@ -70,18 +70,18 @@ function loadMailbox(mailbox) {
   .then(response => response.json())
   .then(emails => {
     emails.forEach(email => {
-      const divRow = showEmail(email);
+      const divRow = showEmail(email, mailbox);
 
       // Load individual emails on click
       divRow.addEventListener('click', function loadEmail() {
         container.innerHTML = "";
-        showEmail(email, true);
+        showEmail(email, mailbox, true);
       });
     });
   });
 }
 
-function showEmail(email, showBody = false) {
+function showEmail(email, mailbox, showBody = false) {
   const sender = email.sender;
   const subject = email.subject;
   const body = email.body;
@@ -153,7 +153,7 @@ function showEmail(email, showBody = false) {
     }
   });
 
-  if (document.querySelector('#emails-view').innerHTML.startsWith('<h3>Sent') == false) {
+  if (mailbox != 'sent') {
 
     // Create archive button
     let archiveButton = document.createElement('button');
@@ -197,7 +197,7 @@ function showEmail(email, showBody = false) {
     }
   divRow.append(archiveButton)
   }
-  
+
   return divRow;
 }
 

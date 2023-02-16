@@ -162,7 +162,9 @@ function showEmail(email, showBody = false) {
   if (archiveStatus == true) {
     archiveButton.innerHTML = 'Unarchive'
 
-    archiveButton.addEventListener('click', async () => {
+    archiveButton.addEventListener('click', async (event) => {
+      event.stopPropagation();
+
       await fetch(`/emails/${email.id}`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -175,7 +177,9 @@ function showEmail(email, showBody = false) {
   } else {
     archiveButton.innerHTML = 'Archive'
 
-    archiveButton.addEventListener('click', async () => {
+    archiveButton.addEventListener('click', async (event) => {
+      event.stopPropagation();
+
       await fetch(`/emails/${email.id}`, {
         method: 'PUT',
         body: JSON.stringify({

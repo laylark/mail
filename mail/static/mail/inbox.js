@@ -144,7 +144,7 @@ function showEmail(email, mailbox, showBody = false) {
   
   divRow.append(divTimestamp);
 
-  if (email.read === true) {
+  if (email.read) {
     divRow.style.backgroundColor = '#D3D3D3';
   }
 
@@ -176,44 +176,26 @@ function showEmail(email, mailbox, showBody = false) {
     let archiveButton = document.createElement('button');
     archiveButton.classList = 'btn btn-sm btn-outline-danger flex m-1';
     archiveButton.innerHTML = 'Archive';
-    // divRow.append(archiveButton);
 
     // Determine the archive button text
     let archiveStatus = email.archived;
 
-    if (archiveStatus == true) {
-      archiveButton.innerHTML = 'Unarchive'
+    archiveButton.innerHTML = archiveStatus ? 'Unarchive' : 'Archive';
 
-      archiveButton.addEventListener('click', async (event) => {
-        event.stopPropagation();
+    archiveButton.addEventListener('click', async (event) => {
+      event.stopPropagation();
 
-        await fetch(`/emails/${email.id}`, {
-          method: 'PUT',
-          body: JSON.stringify({
-              archived: false
-          })
-        });
-
-        loadMailbox('inbox');
+      await fetch(`/emails/${email.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            archived: !archiveStatus,
+        })
       });
-    } else {
-      archiveButton.innerHTML = 'Archive'
 
-      archiveButton.addEventListener('click', async (event) => {
-        event.stopPropagation();
-
-        await fetch(`/emails/${email.id}`, {
-          method: 'PUT',
-          body: JSON.stringify({
-              archived: true
-          })
-        });
-
-        loadMailbox('inbox');
-      });
-    }
+      loadMailbox('inbox');
+    });
     
-    divRow.append(archiveButton)
+    divRow.append(archiveButton);
   }
 
   return divRow;

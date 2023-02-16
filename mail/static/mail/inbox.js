@@ -153,48 +153,51 @@ function showEmail(email, showBody = false) {
     }
   });
 
-  // Create archive button
-  let archiveButton = document.createElement('button');
-  archiveButton.classList = 'btn btn-sm btn-outline-danger flex m-1';
-  archiveButton.innerHTML = 'Archive';
-  // divRow.append(archiveButton);
+  if (document.querySelector('#emails-view').innerHTML.startsWith('<h3>Sent') == false) {
 
-  // Determine the archive button text
-  let archiveStatus = email.archived;
+    // Create archive button
+    let archiveButton = document.createElement('button');
+    archiveButton.classList = 'btn btn-sm btn-outline-danger flex m-1';
+    archiveButton.innerHTML = 'Archive';
+    // divRow.append(archiveButton);
 
-  if (archiveStatus == true) {
-    archiveButton.innerHTML = 'Unarchive'
+    // Determine the archive button text
+    let archiveStatus = email.archived;
 
-    archiveButton.addEventListener('click', async (event) => {
-      event.stopPropagation();
+    if (archiveStatus == true) {
+      archiveButton.innerHTML = 'Unarchive'
 
-      await fetch(`/emails/${email.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-            archived: false
-        })
+      archiveButton.addEventListener('click', async (event) => {
+        event.stopPropagation();
+
+        await fetch(`/emails/${email.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+              archived: false
+          })
+        });
+
+        loadMailbox('inbox');
       });
+    } else {
+      archiveButton.innerHTML = 'Archive'
 
-      loadMailbox('inbox');
-    });
-  } else {
-    archiveButton.innerHTML = 'Archive'
+      archiveButton.addEventListener('click', async (event) => {
+        event.stopPropagation();
 
-    archiveButton.addEventListener('click', async (event) => {
-      event.stopPropagation();
+        await fetch(`/emails/${email.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+              archived: true
+          })
+        });
 
-      await fetch(`/emails/${email.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-            archived: true
-        })
+        loadMailbox('inbox');
       });
-
-      loadMailbox('inbox');
-    });
-  }
+    }
   divRow.append(archiveButton)
-
+  }
+  
   return divRow;
 }
 

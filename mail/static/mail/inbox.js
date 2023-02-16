@@ -127,7 +127,7 @@ function showEmail(email, showBody = false) {
   }
   divRow.append(divTimestamp);
 
-  if (email.read === false) {
+  if (email.read === true) {
     divRow.style.backgroundColor = '#D3D3D3';
   }
 
@@ -141,13 +141,16 @@ function showEmail(email, showBody = false) {
   replyButton.addEventListener('click', () => {
     composeEmail();
     const replySubject = document.querySelector('#compose-subject');
+    const replyBody = document.querySelector('#compose-body');
+    const replyRecipients = document.querySelector('#compose-recipients');
+    replyRecipients.value = sender;
+    replyBody.value = `On ${timestamp} ${sender} wrote: ${body}`;
+
     if (subject.slice(0, 4) != 'RE: ' ) {
       replySubject.value = `RE: ${subject}`;
     } else {
       replySubject.value = subject;
     }
-    const replyRecipients = document.querySelector('#compose-recipients');
-    replyRecipients.value = sender;
   });
 
   // Create archive button

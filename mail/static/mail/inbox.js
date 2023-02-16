@@ -86,7 +86,10 @@ function showEmail(email, mailbox, showBody = false) {
   const subject = email.subject;
   const body = email.body;
   const timestamp = email.timestamp;
+  const recipients = email.recipients;
   const container = document.getElementById('email-list');
+
+  console.log(email);
 
   // Create email element
   const divRow = document.createElement('div');
@@ -95,20 +98,27 @@ function showEmail(email, mailbox, showBody = false) {
 
   const divSender = document.createElement('div');
   divSender.classList = 'col-sm';
-  divSender.innerHTML = sender;
+  divSender.innerHTML = `<strong>${sender}</strong>`;
+  divRow.append(divSender);
+
+  const divRecipients = document.createElement('div');
+  divRecipients.classList = 'col-sm';
+  divRecipients.innerHTML = recipients;
+
+  if (showBody) {
+    divRow.append(divRecipients);
+  }
 
   const divSubject = document.createElement('div');
   divSubject.classList = 'col-sm';
   divSubject.innerHTML = subject;
+  divRow.append(divSubject);
 
   const divTimestamp = document.createElement('div');
   divTimestamp.classList = 'col-sm';
   divTimestamp.innerHTML = timestamp;
 
   document.querySelector('#emails-view').append(container);
-  container.append(divRow);
-  divRow.append(divSender);
-  divRow.append(divSubject);
 
   // Show full email if clicked
   if (showBody) {
@@ -116,6 +126,10 @@ function showEmail(email, mailbox, showBody = false) {
     divBody.classList = 'col-sm';
     divBody.innerHTML = body;
     divRow.append(divBody);
+
+    divSender.innerHTML = `<strong>From: ${sender}</strong>`;
+    divRecipients.innerHTML = `To: ${recipients}`;
+    divSubject.innerHTML = `<h4>${subject}</h4>`;
 
     // Mark email as read
     fetch(`/emails/${email.id}`, {
@@ -197,6 +211,8 @@ function showEmail(email, mailbox, showBody = false) {
     }
   divRow.append(archiveButton)
   }
+
+  container.append(divRow);
 
   return divRow;
 }
